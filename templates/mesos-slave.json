@@ -1,0 +1,15 @@
+{
+  "container": {
+    "type": "DOCKER",
+      "docker": {
+        "image": "mesos-ab8fa655d34e8e15a4290422df38a18db1c09b5b"
+      }
+  },
+    "id": "/ab8fa655d34e8e15a4290422df38a18db1c09b5b/mesos-slave",
+    "instances": "10",
+    "cpus": "0.5",
+    "mem": "512",
+    "ports": [0],
+    "uris": [],
+    "cmd": "mesos-slave --port=$PORT0 --master=zk://foobar/ab8fa655d34e8e15a4290422df38a18db1c09b5b --work_dir=."
+}
