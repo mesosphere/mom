@@ -2,14 +2,14 @@
   "container": {
     "type": "DOCKER",
       "docker": {
-        "image": "mesos-ab8fa655d34e8e15a4290422df38a18db1c09b5b"
+        "image": "{{.MesosDockerImage}}"
       }
   },
-  "id": "/ab8fa655d34e8e15a4290422df38a18db1c09b5b/mesos-master",
-  "instances": "3",
-  "cpus": "0.5",
-  "mem": "512",
+  "id": "{{.MasterAppId}}",
+  "instances": "{{.MasterCount}}",
+  "cpus": "{{.MasterCpus}}",
+  "mem": "{{.MasterMem}}",
   "ports": [0],
   "uris": [],
-  "cmd": "mesos-master --port=$PORT0 --zk=zk://foobar/ab8fa655d34e8e15a4290422df38a18db1c09b5b --work_dir=. --quorum=3"
+  "cmd": "mesos-master --port=$PORT0 --zk={{.ZookeeperUrl}} --work_dir=. --quorum={{.QuorumSize}} {{.MasterFlags}}"
 }
