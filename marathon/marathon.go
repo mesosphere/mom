@@ -62,7 +62,6 @@ func (m *Marathon) CreateApp(app string) error {
 	return nil
 }
 
-// TODO(nnielsen): Return app structure.
 func (m *Marathon) GetApp(appId string) (*Apps, error) {
 	res := &Apps{}
 	url := strings.Join([]string{m.url, appPath, appId}, "/")
@@ -85,4 +84,21 @@ func (m *Marathon) GetApp(appId string) (*Apps, error) {
 	}
 
 	return res, nil
+}
+
+func (m *Marathon) DestroyApp(appId string) error {
+	url := strings.Join([]string{m.url, appPath, appId}, "/")
+	req, err := http.NewRequest("DELETE", url, nil)
+
+	resp, err := m.client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return fmt.Errorf("Could not get app details: %s", resp.Status)
+	}
+
+	return nil
 }

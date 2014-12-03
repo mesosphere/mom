@@ -42,14 +42,30 @@ func main() {
 					Name:  "status",
 					Usage: "",
 					Action: func(c *cli.Context) {
-						dockerImage := ""
+						session := ""
 						if len(c.Args()) != 1 {
               log.Fatal("Status requires session id")
 						}
-						dockerImage = c.Args()[0]
+						session = c.Args()[0]
 
 						cl := cluster.New(conf)
-						err = cl.Status(dockerImage); if err != nil {
+						err = cl.Status(session); if err != nil {
+              log.Fatal(err)
+            }
+					},
+				},
+				{
+					Name:  "destroy",
+					Usage: "",
+					Action: func(c *cli.Context) {
+						session := ""
+						if len(c.Args()) != 1 {
+              log.Fatal("Destroy requires session id")
+						}
+						session = c.Args()[0]
+
+						cl := cluster.New(conf)
+						err = cl.Destroy(session); if err != nil {
               log.Fatal(err)
             }
 					},

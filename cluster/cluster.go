@@ -40,6 +40,40 @@ func (c *Cluster) Status(session string) error {
 	return nil
 }
 
+func (c *Cluster) Destroy(session string) error {
+	m := marathon.New(c.conf.MarathonUrl)
+
+	masterAppId := path.Join(c.conf.AppPrefix, session, masterLabel)
+	slaveAppId := path.Join(c.conf.AppPrefix, session, slaveLabel)
+
+  // Make sure apps exist before trying to destroy a stray application.
+	_, err := m.GetApp(masterAppId)
+	if err != nil {
+		return err
+	}
+
+	_, err = m.GetApp(slaveAppId)
+	if err != nil {
+		return err
+	}
+
+
+  // Now, destroy masters and slaves.
+	err = m.DestroyApp(masterAppId)
+	if err != nil {
+		return err
+	}
+
+	err = m.DestroyApp(slaveAppId)
+	if err != nil {
+		return err
+	}
+
+  fmt.Printf("Cluster session %s destroyed\n", session)
+
+	return nil
+}
+
 func (c *Cluster) Launch(image string) error {
 	m := marathon.New(c.conf.MarathonUrl)
 
