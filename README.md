@@ -70,6 +70,8 @@ slaves:
         mem:            32
 ```
 
+### Get details on your new cluster
+
 You can get details about the new cluster by:
 
 ```
@@ -78,4 +80,13 @@ masters:
         srv3.hw.ca1.mesosphere.com:31006
         srv2.hw.ca1.mesosphere.com:31324
         srv4.hw.ca1.mesosphere.com:31959
+```
+
+### Tear down cluster
+
+You tear down the cluster by
+
+```
+$ mom cluster destroy 81b6ab3a-1d05-4f89-6f30-64db7714c3c4
+Cluster session 81b6ab3a-1d05-4f89-6f30-64db7714c3c4 destroyed
 ```
