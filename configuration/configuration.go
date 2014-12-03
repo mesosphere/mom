@@ -7,14 +7,19 @@ import (
 )
 
 type Configuration struct {
-	DockerHub   string `json:"docker_hub"`
-	Zookeeper   string `json:"zookeeper"`
-	MarathonUrl string `json:"marathon_url"`
-	AppPrefix   string `json:"app_prefix"`
-	QuorumSize  int    `json:"quorum_size"`
-	MasterCount int    `json:"master_count"`
-	SlaveCount  int    `json:"slave_count"`
-	// TODO(nnielsen): Take default master and slave resources.
+	DockerHub   string  `json:"docker_hub"`
+	Zookeeper   string  `json:"zookeeper"`
+	MarathonUrl string  `json:"marathon_url"`
+	AppPrefix   string  `json:"app_prefix"`
+	QuorumSize  int     `json:"quorum_size"`
+	MasterCount int     `json:"master_count"`
+	MasterCpu   float64 `json:"master_cpu"`
+	MasterMem   int     `json:"master_mem"`
+	MasterFlags string  `json:"master_flags"`
+	SlaveCount  int     `json:"slave_count"`
+	SlaveCpu    float64 `json:"slave_cpu"`
+	SlaveMem    int     `json:"slave_mem"`
+	SlaveFlags  string  `json:"slave_flags"`
 }
 
 func Parse() (Configuration, error) {

@@ -11,11 +11,11 @@ import (
 type MasterTemplate struct {
 	MesosDockerImage string
 	MasterAppId      string
-	MasterCount      string
-	MasterCpus       string
-	MasterMem        string
+	MasterCount      int
+	MasterCpus       float64
+	MasterMem        int
 	ZookeeperUrl     string
-	QuorumSize       string
+	QuorumSize       int
 	MasterFlags      string
 }
 
