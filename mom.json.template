@@ -1,0 +1,15 @@
+{
+  "marathon_url": "http://foobar:8080",
+  "docker_hub": "barbaz:5000",
+  "zookeeper": "zk://localhost:2181/mom/",
+  "app_prefix": "/mom",
+  "quorum_size": 1,
+  "master_count": 3,
+  "master_cpu": 0.1,
+  "master_mem": 32,
+  "master_flags": "",
+  "slave_count": 10,
+  "slave_cpu": 0.1,
+  "slave_mem": 32,
+  "slave_flags": ""
+}
