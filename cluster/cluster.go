@@ -3,13 +3,14 @@ package cluster
 import (
 	"fmt"
 	"github.com/mesosphere/mom/configuration"
-	"github.com/mesosphere/mom/templates"
 	"github.com/mesosphere/mom/marathon"
+	"github.com/mesosphere/mom/templates"
 	"github.com/nu7hatch/gouuid"
 	"path"
 )
 
 const masterLabel string = "master"
+const slaveLabel string = "slave"
 
 type Cluster struct {
 	conf configuration.Configuration
@@ -19,52 +20,54 @@ func New(conf configuration.Configuration) *Cluster {
 	return &Cluster{conf}
 }
 
-
 func (c *Cluster) Status(session string) error {
-  m := marathon.New(c.conf.MarathonUrl)
+	m := marathon.New(c.conf.MarathonUrl)
 
 	appId := path.Join(c.conf.AppPrefix, session, masterLabel)
 
-  apps, err := m.GetApp(appId) ; if err != nil {
-    return err
-  }
+	apps, err := m.GetApp(appId)
+	if err != nil {
+		return err
+	}
 
-  fmt.Printf("masters:\n")
-  for _, task := range apps.App.Tasks {
-    if len(task.Ports) > 0 {
-      fmt.Printf("\t%s:%d\n", task.Host, task.Ports[0])
-    }
-  }
+	fmt.Printf("masters:\n")
+	for _, task := range apps.App.Tasks {
+		if len(task.Ports) > 0 {
+			fmt.Printf("\t%s:%d\n", task.Host, task.Ports[0])
+		}
+	}
 
-  return nil
+	return nil
 }
 
 func (c *Cluster) Launch(image string) error {
-  u, err := uuid.NewV4()
-  if err != nil {
-    return fmt.Errorf("Could not generate UUID: ", err)
-  }
+	m := marathon.New(c.conf.MarathonUrl)
 
-  session := u.String()
+	u, err := uuid.NewV4()
+	if err != nil {
+		return fmt.Errorf("Could not generate UUID: ", err)
+	}
 
-  fmt.Println("Launching cluster id: ", session)
+	session := u.String()
 
-  if c.conf.DockerHub != "" {
-    image = path.Join(c.conf.DockerHub, image)
-  }
+	fmt.Println("Launching cluster id: ", session)
 
-	appId := path.Join(c.conf.AppPrefix, session, masterLabel)
+	if c.conf.DockerHub != "" {
+		image = path.Join(c.conf.DockerHub, image)
+	}
 
-  zookeeperUrl := c.conf.Zookeeper + session
+	masterAppId := path.Join(c.conf.AppPrefix, session, masterLabel)
 
-  fmt.Printf("\nmasters:\n")
-  fmt.Printf("\tinstances:\t%d\n", c.conf.MasterCount)
-  fmt.Printf("\tcpu:\t\t%f\n", c.conf.MasterCpu)
-  fmt.Printf("\tmem:\t\t%d\n", c.conf.MasterMem)
+	zookeeperUrl := c.conf.Zookeeper + session
+
+	fmt.Printf("\nmasters:\n")
+	fmt.Printf("\tinstances:\t%d\n", c.conf.MasterCount)
+	fmt.Printf("\tcpu:\t\t%f\n", c.conf.MasterCpu)
+	fmt.Printf("\tmem:\t\t%d\n", c.conf.MasterMem)
 
 	masterTemplate := templates.MasterTemplate{
 		MesosDockerImage: image,
-		MasterAppId:      appId,
+		MasterAppId:      masterAppId,
 		MasterCount:      c.conf.MasterCount,
 		MasterCpus:       c.conf.MasterCpu,
 		MasterMem:        c.conf.MasterMem,
@@ -76,11 +79,34 @@ func (c *Cluster) Launch(image string) error {
 	// TODO(nnielsen): Allow flags to overwrite defaults.
 	masterJson := templates.FormatMaster(masterTemplate)
 
-  m := marathon.New(c.conf.MarathonUrl)
+	slaveAppId := path.Join(c.conf.AppPrefix, session, slaveLabel)
 
-  err = m.CreateApp(masterJson) ; if err != nil {
-    return err
-  }
+	fmt.Printf("\nslaves:\n")
+	fmt.Printf("\tinstances:\t%d\n", c.conf.SlaveCount)
+	fmt.Printf("\tcpu:\t\t%f\n", c.conf.SlaveCpu)
+	fmt.Printf("\tmem:\t\t%d\n", c.conf.SlaveMem)
+
+	slaveTemplate := templates.SlaveTemplate{
+		MesosDockerImage: image,
+		SlaveAppId:       slaveAppId,
+		SlaveCount:       c.conf.SlaveCount,
+		SlaveCpus:        c.conf.SlaveCpu,
+		SlaveMem:         c.conf.SlaveMem,
+		ZookeeperUrl:     zookeeperUrl,
+		SlaveFlags:       c.conf.SlaveFlags,
+	}
+
+	slaveJson := templates.FormatSlave(slaveTemplate)
+
+	err = m.CreateApp(masterJson)
+	if err != nil {
+		return err
+	}
+
+	err = m.CreateApp(slaveJson)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

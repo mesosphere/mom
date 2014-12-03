@@ -8,6 +8,8 @@ import (
 	"text/template"
 )
 
+const repoPath string = "src/github.com/mesosphere/mom"
+
 type MasterTemplate struct {
 	MesosDockerImage string
 	MasterAppId      string
@@ -18,8 +20,6 @@ type MasterTemplate struct {
 	QuorumSize       int
 	MasterFlags      string
 }
-
-const repoPath string = "src/github.com/mesosphere/mom"
 
 func FormatMaster(masterTemplate MasterTemplate) string {
 	goPath := os.Getenv("GOPATH")
@@ -34,6 +34,34 @@ func FormatMaster(masterTemplate MasterTemplate) string {
 	err = tmpl.Execute(buf, masterTemplate)
 	if err != nil {
 		log.Fatal("Could not specialize master template:", err)
+	}
+
+	return buf.String()
+}
+
+type SlaveTemplate struct {
+	MesosDockerImage string
+	SlaveAppId       string
+	SlaveCount       int
+	SlaveCpus        float64
+	SlaveMem         int
+	ZookeeperUrl     string
+	SlaveFlags       string
+}
+
+func FormatSlave(slaveTemplate SlaveTemplate) string {
+	goPath := os.Getenv("GOPATH")
+	templatePath := path.Join(goPath, repoPath, "templates")
+
+	slavePath := path.Join(templatePath, "mesos-slave.json")
+	tmpl, err := template.ParseFiles(slavePath)
+	if err != nil {
+		log.Fatal("Could not parse slave template:", err)
+	}
+	buf := new(bytes.Buffer)
+	err = tmpl.Execute(buf, slaveTemplate)
+	if err != nil {
+		log.Fatal("Could not specialize slave template:", err)
 	}
 
 	return buf.String()
