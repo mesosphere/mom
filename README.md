@@ -1,7 +1,7 @@
 Mesos on Mesos
 ===
 
-## Way to short build instructions
+## Way too short build instructions
 
 Assuming you have GOPATH setup and GOPATH/bin in your PATH.
 
