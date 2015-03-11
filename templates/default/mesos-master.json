@@ -1,0 +1,15 @@
+{
+  "container": {
+    "type": "DOCKER",
+      "docker": {
+        "image": "{{.MesosDockerImage}}"
+      }
+  },
+    "id": "{{.MasterAppId}}",
+    "instances": {{.MasterCount}},
+    "cpus": {{.MasterCpus}},
+    "mem": {{.MasterMem}},
+    "ports": [0],
+    "uris": [],
+    "cmd": "./build/bin/mesos-master.sh --log_dir=. --hostname=$HOST --port=$PORT0 --zk={{.ZookeeperUrl}} --work_dir=/tmp --quorum={{.QuorumSize}} {{.MasterFlags}}"
+}

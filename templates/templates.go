@@ -25,7 +25,7 @@ func FormatMaster(masterTemplate MasterTemplate) string {
 	goPath := os.Getenv("GOPATH")
 	templatePath := path.Join(goPath, repoPath, "templates")
 
-	masterPath := path.Join(templatePath, "mesos-master.json")
+	masterPath := path.Join(templatePath, "default", "mesos-master.json")
 	tmpl, err := template.ParseFiles(masterPath)
 	if err != nil {
 		log.Fatal("Could not parse master template:", err)
@@ -53,7 +53,7 @@ func FormatSlave(slaveTemplate SlaveTemplate) string {
 	goPath := os.Getenv("GOPATH")
 	templatePath := path.Join(goPath, repoPath, "templates")
 
-	slavePath := path.Join(templatePath, "mesos-slave.json")
+	slavePath := path.Join(templatePath, "default", "mesos-slave.json")
 	tmpl, err := template.ParseFiles(slavePath)
 	if err != nil {
 		log.Fatal("Could not parse slave template:", err)

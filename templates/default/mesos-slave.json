@@ -1,0 +1,15 @@
+{
+  "container": {
+    "type": "DOCKER",
+      "docker": {
+        "image": "{{.MesosDockerImage}}"
+      }
+  },
+    "id": "{{.SlaveAppId}}",
+    "instances": {{.SlaveCount}},
+    "cpus": {{.SlaveCpus}},
+    "mem": {{.SlaveMem}},
+    "ports": [0],
+    "uris": [],
+    "cmd": "./build/bin/mesos-slave.sh --log_dir=. --port=$PORT0 --hostname=$HOST --master={{.ZookeeperUrl}} --work_dir=/tmp {{.SlaveFlags}}"
+}

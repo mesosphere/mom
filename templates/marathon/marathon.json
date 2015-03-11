@@ -1,0 +1,18 @@
+{
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "mesosphere/marathon",
+      "network": "HOST",
+      "forcePullImage": "true"
+    }
+  },
+  "ports": [
+    0
+  ],
+  "id": "marathon",
+  "instances": 3,
+  "cpus": 0.5,
+  "mem": 128,
+  "args": ["--port", "$PORT0", "--master", "zk://10.202.66.244:2181,10.6.97.191:2181,10.0.11.124:2181/mom/marathon", "--zk", "zk://10.202.66.244:2181,10.6.97.191:2181,10.0.11.124:2181/mom/marathon"]
+}
